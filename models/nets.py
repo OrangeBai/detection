@@ -156,3 +156,25 @@ def darknet_res_block(input_tensor, filters, activation, block_name, **kwargs):
     x = Activation(activation)(x)
 
     return x
+
+
+def YoloConv(filters, name=None):
+    def yolo_conv(x_in):
+        if isinstance(x_in, tuple):
+            inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
+            x, x_skip = inputs
+
+            # concat with skip connection
+            x = DarknetConv(x, filters, 1)
+            x = UpSampling2D(2)(x)
+            x = Concatenate()([x, x_skip])
+        else:
+            x = inputs = Input(x_in.shape[1:])
+
+        x = DarknetConv(x, filters, 1)
+        x = DarknetConv(x, filters * 2, 3)
+        x = DarknetConv(x, filters, 1)
+        x = DarknetConv(x, filters * 2, 3)
+        x = DarknetConv(x, filters, 1)
+        return Model(inputs, x, name=name)(x_in)
+    return yolo_conv

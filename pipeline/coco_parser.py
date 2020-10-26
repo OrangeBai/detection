@@ -112,6 +112,15 @@ class CocoYoloV1:
             if not endless:
                 break
 
+    def check_cls(self, annotations):
+        cls_num = np.zeros(len(self.categories[0]))
+        for annotation in annotations:
+            for obj in annotation[1]['objects']:
+                category_id = obj['category_id']
+                category_idx = self.categories[1].index(category_id)
+                cls_num[category_idx] += 1
+        return cls_num
+
     def yolo_v1_gt(self, image_annotation):
         """
         Parse image annotation according to model structure
@@ -208,7 +217,6 @@ class CocoYoloV1:
             all_boxes[key] = boxes
             all_probs[key] = probs
         return all_boxes, all_probs
-
 
 # val_ann_path = r"F:\DataSet\COCO\annotations_trainval2017\annotations\instances_val2017.json"
 # val_img_path = r"F:\DataSet\COCO\val2017\val2017"

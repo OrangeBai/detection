@@ -12,10 +12,14 @@ val_annotation, categories = read_annotation(coco_val_annotation)
 train_annotation, _ = read_annotation(coco_train_annotation)
 
 parser = CocoYoloV1(categories, input_shape, 16, downscale=5)
+nums = parser.check_cls(train_annotation)
+sqrt_weights = 1 / nums
+cls_weights = sqrt_weights * 1 / np.mean(sqrt_weights)
+cls_weights = np.expand_dims(cls_weights, axis=-1)
 
 yolo_v1 = YoloV1()
 yolo_v1.build_model(input_shape=input_shape + (3,), cls_num=80)
-yolo_v1.compile(Adam(), yolo_v1_loss(2), metrics=None, lr_schedule=static_learning_rate, init_rate=0.01)
+yolo_v1.compile(Adam(), yolo_v1_loss(2, cls_weights), metrics=None, lr_schedule=static_learning_rate, init_rate=0.01)
 
 for i in range(20):
     aps = []
@@ -32,4 +36,3 @@ for i in range(20):
         mean_ap += item.mean()
     print('Epoch: {0}'.format(i))
     print(mean_ap / len(current_ap))
-

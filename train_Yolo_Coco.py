@@ -15,7 +15,7 @@ train_gen = voc_parser.balanced_gen(feature_size=(7, 7), cls_num=20, box_num=2)
 
 yolo_v1 = YoloV1()
 yolo_v1.build_model(input_shape=input_shape + (3,), cls_num=20)
-yolo_v1.compile(Adam(), yolo_v1_loss(2, np.ones((80, 1))), metrics=None, lr_schedule=static_learning_rate,
+yolo_v1.compile(Adam(), yolo_v1_loss(2, np.ones((20, 1))), metrics=None, lr_schedule=static_learning_rate,
                 init_rate=0.001)
 
 for i in range(5):

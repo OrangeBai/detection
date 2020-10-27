@@ -82,20 +82,6 @@ class BaseModel:
             self.model.optimizer.learning_rate = learning_rate
             print(new_lr)
 
-    def evaluate_on_generator(self, val_gen):
-        pre_res = []
-        gt_res = []
-        while True:
-            try:
-                x_val, y_val = next(val_gen)
-                res = self.model.predict_on_batch(np.array(x_val))
-                for cur_res, cur_gt in zip(res, y_val):
-                    pre_res.append(cur_res)
-                    gt_res.append(cur_gt)
-            except StopIteration:
-                break
-        return pre_res, gt_res
-
     def multiple_training(self, exp_num):
         pass
 

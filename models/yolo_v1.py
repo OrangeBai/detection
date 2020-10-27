@@ -28,19 +28,16 @@ class YoloV1(BaseModel):
     def evaluate(self, val_gen, parser):
         predict_result = []
         ground_truth = []
-        pre_res, gt_res = super().evaluate_on_generator(val_gen)
-        st = time.time()
-        for single_pre, single_gt in zip(pre_res, gt_res):
-            single_pre = single_pre.numpy()  # eager mode
-            # single_pre = single_pre.eval()             # non-eager
-            predict_result.append(parser.parse_result(single_pre))
-            ground_truth.append(parser.parse_result(single_gt))
+        while True:
+            try:
+                x_val, y_val = next(val_gen)
+                res = self.model.predict_on_batch(np.array(x_val))
+                for cur_res, cur_gt in zip(res, y_val):
+                    cur_res = cur_res.numpy()  # eager mode
+                    # single_pre = single_pre.eval()             # non-eager
+                    predict_result.append(parser(cur_res))
+                    ground_truth.append(parser(cur_gt))
+            except StopIteration:
+                break
 
-        val_result = {key: {'positive': [], 'number': 0} for key in range(len(parser.categories[0]))}
-        for single_pre, single_gt in zip(predict_result, ground_truth):
-            calculate_tp(val_result, single_gt, single_pre)
-        print(time.time() - st)
-        aps = {}
-        for key in val_result.keys():
-            aps[key] = calculate_ap(val_result[key]['positive'], val_result[key]['number'])
-        return aps
+        return predict_result, ground_truth

@@ -20,12 +20,12 @@ yolo_v1.compile(Adam(), yolo_v1_loss(2, np.ones((20, 1))), metrics=None, lr_sche
 
 for i in range(5):
     aps = []
-    yolo_v1.train_epoch(500, train_gen)
+    yolo_v1.train_epoch(50, train_gen)
     yolo_v1.update_lr(80, i)
 
     positive = []
     gt_num = []
-    predict_res, gt_res = yolo_v1.evaluate(val_gen, coco_parser.yolo_v1_result_parser, 1000, feature_size=(7, 7),
+    predict_res, gt_res = yolo_v1.evaluate(val_gen, coco_parser.yolo_v1_result_parser, 50, feature_size=(7, 7),
                                            box_num=2)
 
     val_results = {category: {'positive': [], 'number': 0} for category in coco_parser.categories}

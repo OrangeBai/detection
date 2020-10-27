@@ -63,16 +63,18 @@ class VOCParser(DataGenerator):
                 category, coordinates = self.__load_obj_annotation(obj)
                 label.append({
                     'category': category,
-                    'coordinates': coordinates
+                    'bbox': coordinates
                 })
 
             val_labels[file_name] = {
-                'image_path': image_path,
-                'image_size': image_size,
-                'label': label
+                'path': image_path,
+                'size': image_size,
+                'objects': label
             }
         self.train_labels = train_labels
         self.val_labels = val_labels
+
+        self.save_dataset()
         return
 
     @staticmethod
@@ -93,8 +95,10 @@ class VOCParser(DataGenerator):
         pass
 
 
+# voc_parser = VOCParser(r'F:\DataSet\VOC\VOCtrainval_11-May-2012\VOCdevkit', resize=(224, 224), batch_size=32)
+# voc_parser.parse_dataset()
+# gen = voc_parser.balanced_gen(feature_size=(7, 7), cls_num=80, box_num=2)
+# for i in range(10):
+#     print(next(gen))
+
 voc_parser = VOCParser(r'F:\DataSet\VOC\VOCtrainval_11-May-2012\VOCdevkit', resize=(224, 224), batch_size=32)
-voc_parser.parse_dataset()
-gen = voc_parser.balanced_gen(feature_size=(7, 7), cls_num=80, box_num=2)
-for i in range(10):
-    print(next(gen))

@@ -55,8 +55,8 @@ class COCOParser(DataGenerator):
             category_id = annotation['category_id']
             category = category_id_dict[category_id]
 
-            if dataset == 'train':
-                self.category_indexer[category].append(image_id)
+            if dataset == 'train' and image_id in image_annotation.keys():
+                self.category_indexer[category].append(str(image_id))
 
             if image_id in image_annotation.keys():
                 image_annotation[image_id]['objects'].append(
@@ -90,6 +90,3 @@ class COCOParser(DataGenerator):
 
 
 a = COCOParser(r'F:\DataSet\COCO', resize=(224, 224), batch_size=32)
-gen = a.sequential_gen(feature_size=(7, 7), cls_num=80, box_num=2)
-b = next(gen)
-print(1)

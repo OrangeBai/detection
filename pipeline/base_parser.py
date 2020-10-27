@@ -153,9 +153,9 @@ class DataGenerator:
             current_indexer = choice(self.category_indexer[next_category])
             annotation_batch.append(current_indexer)
             
-            for label in self.train_labels[current_indexer]['label']:
+            for object in self.train_labels[current_indexer]['objects']:
                 # check objects contained in the current image, and update the category_counter
-                category = label['category']
+                category = object['category']
                 self.category_counter[category] += 1
 
         return annotation_batch
@@ -228,7 +228,7 @@ class DataGenerator:
                 label[y_index, x_index, box_num * 5 + category_label] = 1
         return label
 
-    def yolo_v1_result_parser(self, result, feature_size, box_num, obj_threshold=0.5, overlap_threshold=0.7):
+    def yolo_v1_result_parser(self, result, feature_size, box_num, obj_threshold=0.7, overlap_threshold=0.7):
         """
         retrieve predict result from label
         :param box_num:

@@ -25,7 +25,7 @@ class YoloV1(BaseModel):
         self.model = model
         return
 
-    def evaluate(self, val_gen, parser):
+    def evaluate(self, val_gen, parser, batch_num=None, **kwargs):
         predict_result = []
         ground_truth = []
         while True:
@@ -35,8 +35,10 @@ class YoloV1(BaseModel):
                 for cur_res, cur_gt in zip(res, y_val):
                     cur_res = cur_res.numpy()  # eager mode
                     # single_pre = single_pre.eval()             # non-eager
-                    predict_result.append(parser(cur_res))
-                    ground_truth.append(parser(cur_gt))
+                    predict_result.append(parser(cur_res, **kwargs))
+                    ground_truth.append(parser(cur_gt, **kwargs))
+                if batch_num and len(predict_result) > batch_num:
+                    break
             except StopIteration:
                 break
 

@@ -3,7 +3,7 @@ import tensorflow.keras.backend as bk
 import tensorflow as tf
 
 
-def yolo_v1_loss(box_num, weights, lambda_co=5, lambda_no=0.5):
+def yolo_v1_loss(box_num, weights, lambda_co=5, lambda_no=1):
     def yolo_v1_loss_fun(y_gt, y_pre):
         loss_coord = 0
         loss_obj = 0

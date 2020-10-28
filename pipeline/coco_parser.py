@@ -89,4 +89,4 @@ class COCOParser(DataGenerator):
 #     print(a)
 
 
-a = COCOParser(r'F:\DataSet\COCO', resize=(224, 224), batch_size=32)
+# a = COCOParser(r'F:\DataSet\COCO', resize=(224, 224), batch_size=32)

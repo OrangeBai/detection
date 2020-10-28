@@ -7,25 +7,25 @@ from utils.losses import *
 from config import *
 
 tf.config.experimental_run_functions_eagerly(True)
-input_shape = (224, 224)
+input_shape = (448, 448)
 
-coco_parser = COCOParser(r'F:\DataSet\COCO', resize=(224, 224), batch_size=32)
-val_gen = voc_parser.sequential_gen(feature_size=(7, 7), cls_num=20, box_num=2)
-train_gen = voc_parser.balanced_gen(feature_size=(7, 7), cls_num=20, box_num=2)
+coco_parser = VOCParser(r'F:\DataSet\VOC\VOCtrainval_11-May-2012\VOCdevkit', resize=(448, 448), batch_size=8)
+val_gen = coco_parser.sequential_gen(feature_size=(7, 7), cls_num=20, box_num=2)
+train_gen = coco_parser.balanced_gen(feature_size=(7, 7), cls_num=20, box_num=2)
 
 yolo_v1 = YoloV1()
 yolo_v1.build_model(input_shape=input_shape + (3,), cls_num=20)
 yolo_v1.compile(Adam(), yolo_v1_loss(2, np.ones((20, 1))), metrics=None, lr_schedule=static_learning_rate,
-                init_rate=0.001)
+                init_rate=0.01)
 
-for i in range(5):
+for i in range(80):
     aps = []
-    yolo_v1.train_epoch(50, train_gen)
+    yolo_v1.train_epoch(500, train_gen)
     yolo_v1.update_lr(80, i)
 
     positive = []
     gt_num = []
-    predict_res, gt_res = yolo_v1.evaluate(val_gen, coco_parser.yolo_v1_result_parser, 50, feature_size=(7, 7),
+    predict_res, gt_res = yolo_v1.evaluate(val_gen, coco_parser.yolo_v1_result_parser, None, feature_size=(7, 7),
                                            box_num=2)
 
     val_results = {category: {'positive': [], 'number': 0} for category in coco_parser.categories}

@@ -13,8 +13,10 @@ class YoloV1(BaseModel):
         input_tensor = Input(input_shape)
         feature_map = darknet_v1(input_tensor, activation=relu, **kwargs)
         x = Flatten()(feature_map)
-        x = dense_layer(x, units=2048, activation=relu, **kwargs)
         x = Dropout(0.5)(x)
+        x = dense_layer(x, units=1024, activation=relu, **kwargs)
+        x = Dropout(0.5)(x)
+        x = dense_layer(x, units=4096, activation=relu, **kwargs)
         dense_units = feature_map.shape[1] * feature_map.shape[2] * (5 * box_num + cls_num)
         output_shape = (feature_map.shape[1], feature_map.shape[2], 5 * box_num + cls_num)
 

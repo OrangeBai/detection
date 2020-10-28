@@ -1,5 +1,6 @@
 from tensorflow.keras.layers import *
 from tensorflow.keras.activations import *
+import tensorflow as tf
 
 
 def dense_layer(input_layer, units, activation, batch_norm=True, **kwargs):
@@ -158,23 +159,43 @@ def darknet_res_block(input_tensor, filters, activation, block_name, **kwargs):
     return x
 
 
-def YoloConv(filters, name=None):
-    def yolo_conv(x_in):
-        if isinstance(x_in, tuple):
-            inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
-            x, x_skip = inputs
+def darknet_conv(x, filters, activation, **kwargs):
+    x = conv_layer(x,
+                   filters=filters,
+                   kernel_size=(1, 1),
+                   strides=(1, 1),
+                   activation=activation,
+                   **kwargs)
+    x = conv_layer(x,
+                   filters=filters * 2,
+                   kernel_size=(3, 3),
+                   strides=(1, 1),
+                   activation=activation,
+                   **kwargs)
+    x = conv_layer(x,
+                   filters=filters * 2,
+                   kernel_size=(1, 1),
+                   strides=(1, 1),
+                   activation=activation,
+                   **kwargs)
+    x = conv_layer(x,
+                   filters=filters,
+                   kernel_size=(3, 3),
+                   strides=(1, 1),
+                   activation=activation,
+                   **kwargs)
+    x = conv_layer(x,
+                   filters=filters * 2,
+                   kernel_size=(1, 1),
+                   strides=(1, 1),
+                   activation=activation,
+                   **kwargs)
+    return x
 
-            # concat with skip connection
-            x = DarknetConv(x, filters, 1)
-            x = UpSampling2D(2)(x)
-            x = Concatenate()([x, x_skip])
-        else:
-            x = inputs = Input(x_in.shape[1:])
 
-        x = DarknetConv(x, filters, 1)
-        x = DarknetConv(x, filters * 2, 3)
-        x = DarknetConv(x, filters, 1)
-        x = DarknetConv(x, filters * 2, 3)
-        x = DarknetConv(x, filters, 1)
-        return Model(inputs, x, name=name)(x_in)
-    return yolo_conv
+def yolo_v3_output(x, filters, anchors, classes, activation, name=None):
+    x = conv_layer(x, filters * 2, (3,3), activation=activation)
+    x = conv_layer(x, anchors * (classes + 5), (3,3), activation=activation, batch_norm=False)
+    x = Reshape((-1, tf.shape(x)[1], tf.shape(x)[2], anchors, classes + 5))(x)
+    return x
+

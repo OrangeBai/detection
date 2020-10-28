@@ -228,7 +228,7 @@ class DataGenerator:
                 label[y_index, x_index, box_num * 5 + category_label] = 1
         return label
 
-    def yolo_v1_result_parser(self, result, feature_size, box_num, obj_threshold=0.7, overlap_threshold=0.7):
+    def yolo_v1_result_parser(self, result, feature_size, box_num, obj_threshold=0.5, overlap_threshold=0.7):
         """
         retrieve predict result from label
         :param box_num:

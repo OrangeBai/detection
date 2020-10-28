@@ -101,4 +101,4 @@ class VOCParser(DataGenerator):
 # for i in range(10):
 #     print(next(gen))
 
-voc_parser = VOCParser(r'F:\DataSet\VOC\VOCtrainval_11-May-2012\VOCdevkit', resize=(224, 224), batch_size=32)
+# voc_parser = VOCParser(r'F:\DataSet\VOC\VOCtrainval_11-May-2012\VOCdevkit', resize=(224, 224), batch_size=32)
